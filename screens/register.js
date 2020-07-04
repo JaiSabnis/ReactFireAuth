@@ -5,30 +5,27 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
-  StatusBar,
-  LayoutAnimation,
 } from "react-native";
 import { Button } from "native-base";
 import * as firebase from "firebase";
 
 export default class Login extends React.Component {
   state = {
+    name: "",
     email: "",
     password: "",
     errorMessage: null,
   };
 
-  static navigationOptions = {
-    header: null,
-  };
-
-  login = () => {
-    const { email, password } = this.state;
-
+  register = () => {
     firebase
       .auth()
-      .signInWithEmailAndPassword(email, password)
+      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then((userCredentials) => {
+        userCredentials.user.updateProfile({
+          displayName: this.state.name,
+        });
+      })
       .catch((error) => this.setState({ errorMessage: error.message }));
 
     firebase.auth().onAuthStateChanged((user) => {
@@ -39,13 +36,23 @@ export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Sign In</Text>
+        <Text style={styles.title}>Yo! Sign Up</Text>
         <View>
           <Text style={styles.error}>{this.state.errorMessage}</Text>
         </View>
 
         <View style={styles.form}>
           <View>
+            <Text style={styles.inputTitle}>Display Name:</Text>
+            <TextInput
+              style={styles.input}
+              autoCapitalize="none"
+              onChangeText={(name) => this.setState({ name })}
+              value={this.state.name}
+            ></TextInput>
+          </View>
+
+          <View style={{ marginTop: 32 }}>
             <Text style={styles.inputTitle}>Email:</Text>
             <TextInput
               style={styles.input}
@@ -66,16 +73,17 @@ export default class Login extends React.Component {
             ></TextInput>
           </View>
         </View>
-        <TouchableOpacity style={styles.loginBtn} onPress={this.login}>
-          <Text style={styles.whiteText}> Sign In</Text>
+        <TouchableOpacity style={styles.loginBtn} onPress={this.register}>
+          <Text style={styles.whiteText}> Sign Up</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={{ alignSelf: "center", marginTop: 30 }}
-          onPress={() => this.props.navigation.navigate("Register")}
+          onPress={() => this.props.navigation.navigate("Login")}
         >
           <Text>
-            You new here?<Text style={{ color: "purple" }}> Sign Up</Text>
+            You already a part of the fam?
+            <Text style={{ color: "purple" }}> Sign In instead</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -90,10 +98,10 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 32,
-    fontSize: 30,
-    fontWeight: "800",
+    fontSize: 18,
+    fontWeight: "400",
     textAlign: "center",
-    color: "#514E5A",
+    color: "#purple",
   },
   error: {
     height: 72,

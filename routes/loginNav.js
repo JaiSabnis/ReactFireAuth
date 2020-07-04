@@ -2,7 +2,7 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import Login from "../screens/login";
 import Home from "../screens/home";
-import LoginTest from "../screens/loginTest";
+import LoginTest from "../screens/loading";
 
 import React from "react";
 
